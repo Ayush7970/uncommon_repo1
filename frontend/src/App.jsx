@@ -1,35 +1,58 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import './App.css';
+import LogoAnimation from "./components/LogoAnimation"; // Import CSS file
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [showLogo, setShowLogo] = useState(true);
+  const [fadeInContent, setFadeInContent] = useState(false);
+
+  const handleAnimationComplete = () => {
+      setShowLogo(false);
+      setTimeout(() => setFadeInContent(true), 500); // Delay main content fade-in
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+      <>
+          {showLogo ? (
+              <LogoAnimation onAnimationComplete={handleAnimationComplete} />
+          ) : (
+            <div>
+              <div className={`main-content ${fadeInContent ? "fade-in" : ""}`}
+                   style={{ backgroundColor: "#242424", textAlign: "center", padding: "20px" }}
+              >
+                <div className="content">
+                  <h1 className="welcome">Welcome to FamilyBudget!</h1>
+                  <h2 className="description">Who's Budgeting?</h2>
+                  <button 
+                    className="profile-button" 
+                    onClick={() => alert('Profile button clicked!')}
+                  >
+                    Anupam
+                  </button>
+                  <button 
+                    className="profile-button" 
+                    onClick={() => alert('Profile button clicked!')}
+                  >
+                    Ayush
+                  </button>
+                  <button 
+                    className="profile-button" 
+                    onClick={() => alert('Profile button clicked!')}
+                  >
+                    Nathan
+                  </button>
+                  <button 
+                    className="profile-button" 
+                    onClick={() => alert('Profile button clicked!')}
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+      </>
+  );
 }
 
-export default App
+export default App;
