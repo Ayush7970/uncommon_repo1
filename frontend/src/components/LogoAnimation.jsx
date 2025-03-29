@@ -35,7 +35,7 @@ const LogoAnimation = ({ onAnimationComplete }) => {
       <div className={`logo-content stage-${animationStage}`}>
         <h1 className="logo-text">
           <span className="family">Family</span>
-          <span className="budget">Budget</span>
+          <span className="fund">Fund</span>
         </h1>
       </div>
     </div>
