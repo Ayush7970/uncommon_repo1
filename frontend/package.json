@@ -12,6 +12,8 @@
   "dependencies": {
     "@react-three/drei": "^10.0.5",
     "@react-three/fiber": "^9.1.0",
+    "@splinetool/react-spline": "^4.0.0",
+    "@splinetool/runtime": "^1.9.82",
     "framer-motion": "^12.6.2",
     "react": "^19.0.0",
     "react-chartjs-2": "^5.3.0",
