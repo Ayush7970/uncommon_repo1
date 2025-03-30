@@ -42,14 +42,14 @@ const BudgetPlanning = () => {
           <CreditCard profileName={profileName || "User"} />
         </div>
         <div className="pie-chart-section">
-          <PieChart />
+          <PieChart profileId={profileId}/>
         </div>
       </div>
       
       {/* Bottom section: Loans and Bar Chart */}
       <div className="bottom-section">
         <div className="loans-section">
-          <LoansInfo />
+          <LoansInfo profileId={profileId}/>
         </div>
         <div className="bar-chart-section">
           <BarChart profileId={profileId}/>

@@ -474,7 +474,239 @@ def get_family_expenses(profile_id):
             "success": False,
             "message": f"Server error: {str(e)}"
         }), 500
-    
+@app.route("/api/monthly-expenses/<profile_id>", methods=["GET"])
+def get_monthly_expenses(profile_id):
+    try:
+        with get_db_connection() as connection:
+            with connection.cursor() as cursor:
+                # Get the last 5 months of expenses for this profile
+                cursor.execute(
+                    """
+                    SELECT 
+                        expense_id,
+                        expense_type,
+                        amount,
+                        due_date
+                    FROM expenses
+                    WHERE profile_id = %s
+                    AND due_date >= DATE_SUB(CURDATE(), INTERVAL 5 MONTH)
+                    ORDER BY due_date DESC
+                    """,
+                    (profile_id,)
+                )
+                expenses = cursor.fetchall()
+                return jsonify(expenses)
+                
+    except Exception as e:
+        print(f"Error getting monthly expenses: {str(e)}")
+        return jsonify({
+            "success": False,
+            "message": f"Server error: {str(e)}"
+        }), 500
+
+@app.route("/api/family-monthly-expenses/<profile_id>", methods=["GET"])
+def get_family_monthly_expenses(profile_id):
+    try:
+        with get_db_connection() as connection:
+            with connection.cursor() as cursor:
+                # First check if this profile exists and is an earner
+                cursor.execute(
+                    "SELECT is_earner FROM master_profile WHERE profile_id = %s",
+                    (profile_id,)
+                )
+                profile = cursor.fetchone()
+                
+                if not profile:
+                    return jsonify({
+                        "success": False,
+                        "message": "Profile not found"
+                    }), 404
+                
+                # Check if this user is an earner
+                if not profile['is_earner']:
+                    return jsonify({
+                        "success": False,
+                        "message": "Only earners can view family expenses"
+                    }), 403
+                
+                # Get parent name
+                cursor.execute(
+                    "SELECT full_name FROM master_profile WHERE profile_id = %s",
+                    (profile_id,)
+                )
+                parent = cursor.fetchone()
+                
+                # Get parent's expenses for the last 5 months
+                cursor.execute(
+                    """
+                    SELECT 
+                        expense_id,
+                        expense_type,
+                        amount,
+                        due_date
+                    FROM expenses
+                    WHERE profile_id = %s
+                    AND due_date >= DATE_SUB(CURDATE(), INTERVAL 5 MONTH)
+                    """,
+                    (profile_id,)
+                )
+                parent_expenses = cursor.fetchall()
+                
+                # Get all dependants
+                cursor.execute(
+                    """
+                    SELECT profile_id
+                    FROM master_profile
+                    WHERE is_earner = 0 AND dependant_of = %s
+                    """,
+                    (parent['full_name'],)
+                )
+                dependants = cursor.fetchall()
+                
+                # Get all dependant expenses for the last 5 months
+                all_expenses = list(parent_expenses)
+                for dependant in dependants:
+                    cursor.execute(
+                        """
+                        SELECT 
+                            expense_id,
+                            expense_type,
+                            amount,
+                            due_date
+                        FROM expenses
+                        WHERE profile_id = %s
+                        AND due_date >= DATE_SUB(CURDATE(), INTERVAL 5 MONTH)
+                        """,
+                        (dependant['profile_id'],)
+                    )
+                    dependant_expenses = cursor.fetchall()
+                    all_expenses.extend(dependant_expenses)
+                
+                return jsonify(all_expenses)
+                
+    except Exception as e:
+        print(f"Error getting family monthly expenses: {str(e)}")
+        return jsonify({
+            "success": False,
+            "message": f"Server error: {str(e)}"
+        }), 500
+
+
+@app.route("/api/loans/<profile_id>", methods=["GET"])
+def get_loans(profile_id):
+    try:
+        with get_db_connection() as connection:
+            with connection.cursor() as cursor:
+                # Get all expenses for this profile
+                cursor.execute(
+                    """
+                    SELECT 
+                        expense_id,
+                        expense_type,
+                        amount,
+                        due_date
+                    FROM expenses
+                    WHERE profile_id = %s
+                    ORDER BY amount DESC
+                    """,
+                    (profile_id,)
+                )
+                expenses = cursor.fetchall()
+                return jsonify(expenses)
+                
+    except Exception as e:
+        print(f"Error getting loans: {str(e)}")
+        return jsonify({
+            "success": False,
+            "message": f"Server error: {str(e)}"
+        }), 500
+
+@app.route("/api/family-loans/<profile_id>", methods=["GET"])
+def get_family_loans(profile_id):
+    try:
+        with get_db_connection() as connection:
+            with connection.cursor() as cursor:
+                # First check if this profile exists and is an earner
+                cursor.execute(
+                    "SELECT is_earner FROM master_profile WHERE profile_id = %s",
+                    (profile_id,)
+                )
+                profile = cursor.fetchone()
+                
+                if not profile:
+                    return jsonify({
+                        "success": False,
+                        "message": "Profile not found"
+                    }), 404
+                
+                # Check if this user is an earner
+                if not profile['is_earner']:
+                    return jsonify({
+                        "success": False,
+                        "message": "Only earners can view family loans"
+                    }), 403
+                
+                # Get parent name
+                cursor.execute(
+                    "SELECT full_name FROM master_profile WHERE profile_id = %s",
+                    (profile_id,)
+                )
+                parent = cursor.fetchone()
+                
+                # Get parent's expenses
+                cursor.execute(
+                    """
+                    SELECT 
+                        expense_id,
+                        expense_type,
+                        amount,
+                        due_date
+                    FROM expenses
+                    WHERE profile_id = %s
+                    """,
+                    (profile_id,)
+                )
+                parent_expenses = cursor.fetchall()
+                
+                # Get all dependants
+                cursor.execute(
+                    """
+                    SELECT profile_id
+                    FROM master_profile
+                    WHERE is_earner = 0 AND dependant_of = %s
+                    """,
+                    (parent['full_name'],)
+                )
+                dependants = cursor.fetchall()
+                
+                # Get all dependant expenses
+                all_expenses = list(parent_expenses)
+                for dependant in dependants:
+                    cursor.execute(
+                        """
+                        SELECT 
+                            expense_id,
+                            expense_type,
+                            amount,
+                            due_date
+                        FROM expenses
+                        WHERE profile_id = %s
+                        """,
+                        (dependant['profile_id'],)
+                    )
+                    dependant_expenses = cursor.fetchall()
+                    all_expenses.extend(dependant_expenses)
+                
+                return jsonify(all_expenses)
+                
+    except Exception as e:
+        print(f"Error getting family loans: {str(e)}")
+        return jsonify({
+            "success": False,
+            "message": f"Server error: {str(e)}"
+        }), 500
+
+
 # Health check endpoint
 @app.route("/health")
 def health_check():
