@@ -51,6 +51,9 @@ const ProfileSelection = ({ onProfileSelect }) => {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
+
+        console.log("This is the data we got", data);
+         
         setProfiles(data);
         setLoading(false);
       } catch (err) {

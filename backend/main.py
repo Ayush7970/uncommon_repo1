@@ -129,7 +129,7 @@ def register_user():
                             personal_info['zipCode'],
                             base_salary,
                             is_earner,
-                            personal_info.get('dependantOf', None) if not is_earner else None
+                            personal_info.get('dependantOf', None) if not is_earner else None 
                         )
                     )
                     
@@ -200,11 +200,61 @@ def register_user():
             "message": f"Server error: {str(e)}"
         }), 500
 
+# @app.route("/api/profiles/<id>", methods=["GET"])
+# def get_all_profiles(id):
+#     try:
+#         with get_db_connection() as connection:
+#             with connection.cursor() as cursor:
+#                 cursor.execute(
+#                     """
+#                     SELECT 
+#                         profile_id as id, 
+#                         full_name as name, 
+#                         is_earner, 
+#                         dependant_of
+#                     FROM master_profile
+#                     WHERE profile_id = %s
+#                     ORDER BY is_earner DESC, full_name ASC
+#                     """
+#                     , (id,)
+#                 )
+#                 profiles = cursor.fetchall()
+#                 # get all users who are dependants of the dependant_of
+#                 if profiles:
+#                     dependant_of = profiles[0]['dependant_of']
+#                     cursor.execute(
+#                         """
+#                         SELECT 
+#                             profile_id as id, 
+#                             full_name as name, 
+#                             is_earner, 
+#                             dependant_of
+#                         FROM master_profile
+#                         WHERE dependant_of = %s
+#                         ORDER BY is_earner DESC, full_name ASC
+#                         """, (dependant_of,)
+#                     )
+#                     dependants = cursor.fetchall()
+#                     profiles.extend(dependants)
+                
+#                 if not profiles:
+#                     return jsonify([]), 200
+                
+#                 return jsonify(profiles)
+                
+#     except Exception as e:
+#         return jsonify({
+#             "success": False,
+#             "message": f"Server error: {str(e)}"
+#         }), 500
+    
+
 @app.route("/api/profiles/<id>", methods=["GET"])
 def get_all_profiles(id):
     try:
         with get_db_connection() as connection:
             with connection.cursor() as cursor:
+                # First get the requested profile
                 cursor.execute(
                     """
                     SELECT 
@@ -214,14 +264,24 @@ def get_all_profiles(id):
                         dependant_of
                     FROM master_profile
                     WHERE profile_id = %s
-                    ORDER BY is_earner DESC, full_name ASC
-                    """
-                    , (id,)
+                    """, (id,)
                 )
-                profiles = cursor.fetchall()
-                # get all users who are dependants of the dependant_of
-                if profiles:
-                    dependant_of = profiles[0]['dependant_of']
+                profile = cursor.fetchone()
+                
+                if not profile:
+                    return jsonify([]), 200
+                
+                # Initialize the result array
+                family_members = []
+                
+                print(f"Found profile: {profile}")  # Debug info
+                
+                if profile['is_earner']:
+                    # This is a parent/earner - add them to results
+                    family_members.append(profile)
+                    
+                    print(f"Parent name: {profile['name']}")  # Debug info
+                    # Get all their dependants - look for profiles where dependant_of equals this parent's name
                     cursor.execute(
                         """
                         SELECT 
@@ -230,19 +290,173 @@ def get_all_profiles(id):
                             is_earner, 
                             dependant_of
                         FROM master_profile
-                        WHERE dependant_of = %s
-                        ORDER BY is_earner DESC, full_name ASC
-                        """, (dependant_of,)
+                        WHERE dependant_of = %s AND is_earner = 0
+                        ORDER BY full_name ASC
+                        """, (profile['name'],)  # Use the parent's name, not ID
                     )
                     dependants = cursor.fetchall()
-                    profiles.extend(dependants)
+                    print(f"Dependants found: {dependants}")  # Debug info
+                    family_members.extend(dependants)
+                else:
+                    # This is a dependant - get the parent first
+                    # Since dependant_of contains the parent's name, look for a profile with that name
+                    parent_name = profile['dependant_of']
+                    print(f"Looking for parent with name: {parent_name}")  # Debug info
+                    
+                    cursor.execute(
+                        """
+                        SELECT 
+                            profile_id as id, 
+                            full_name as name, 
+                            is_earner, 
+                            dependant_of
+                        FROM master_profile
+                        WHERE full_name = %s AND is_earner = 1
+                        """, (parent_name,)
+                    )
+                    parent = cursor.fetchone()
+                    print(f"Parent found: {parent}")  # Debug info
+                    
+                    if parent:
+                        family_members.append(parent)
+                    
+                    # Add the current dependant
+                    family_members.append(profile)
+                    
+                    # Get all siblings (other dependants of the same parent)
+                    if parent_name:
+                        cursor.execute(
+                            """
+                            SELECT 
+                                profile_id as id, 
+                                full_name as name, 
+                                is_earner, 
+                                dependant_of
+                            FROM master_profile
+                            WHERE dependant_of = %s AND profile_id != %s AND is_earner = 0
+                            ORDER BY full_name ASC
+                            """, (parent_name, profile['id'])
+                        )
+                        siblings = cursor.fetchall()
+                        print(f"Siblings found: {siblings}")  # Debug info
+                        family_members.extend(siblings)
                 
-                if not profiles:
-                    return jsonify([]), 200
-                
-                return jsonify(profiles)
+                print(f"Final family members: {family_members}")  # Debug info
+                return jsonify(family_members)
                 
     except Exception as e:
+        print(f"ERROR in get_all_profiles: {str(e)}")  # Debug info
+        return jsonify({
+            "success": False,
+            "message": f"Server error: {str(e)}"
+        }), 500
+    
+
+@app.route("/api/expenses/<profile_id>", methods=["GET"])
+def get_profile_expenses(profile_id):
+    try:
+        with get_db_connection() as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """
+                    SELECT 
+                        expense_id,
+                        expense_type,
+                        amount,
+                        due_date
+                    FROM expenses
+                    WHERE profile_id = %s
+                    ORDER BY amount DESC
+                    """,
+                    (profile_id,)
+                )
+                expenses = cursor.fetchall()
+                
+                return jsonify(expenses)
+                
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": f"Server error: {str(e)}"
+        }), 500
+    
+@app.route("/api/family-expenses/<profile_id>", methods=["GET"])
+def get_family_expenses(profile_id):
+    try:
+        with get_db_connection() as connection:
+            with connection.cursor() as cursor:
+                # First, get the profile to verify it's an earner (parent)
+                cursor.execute(
+                    """
+                    SELECT is_earner FROM master_profile 
+                    WHERE profile_id = %s
+                    """,
+                    (profile_id,)
+                )
+                profile = cursor.fetchone()
+                
+                if not profile:
+                    return jsonify({
+                        "success": False,
+                        "message": "Profile not found"
+                    }), 404
+                
+                if not profile['is_earner']:
+                    return jsonify({
+                        "success": False,
+                        "message": "Only earners can view family expenses"
+                    }), 403
+                
+                # Get expenses for the parent (earner)
+                cursor.execute(
+                    """
+                    SELECT 
+                        expense_id,
+                        expense_type,
+                        amount,
+                        due_date
+                    FROM expenses
+                    WHERE profile_id = %s
+                    """,
+                    (profile_id,)
+                )
+                parent_expenses = cursor.fetchall()
+                
+                # Get all dependants of this earner
+                cursor.execute(
+                    """
+                    SELECT profile_id
+                    FROM master_profile
+                    WHERE is_earner = 0 AND dependant_of = %s
+                    """,
+                    (profile_id,)
+                )
+                dependants = cursor.fetchall()
+                
+                # Get expenses for all dependants
+                dependant_expenses = []
+                for dependant in dependants:
+                    cursor.execute(
+                        """
+                        SELECT 
+                            expense_id,
+                            expense_type,
+                            amount,
+                            due_date
+                        FROM expenses
+                        WHERE profile_id = %s
+                        """,
+                        (dependant['profile_id'],)
+                    )
+                    dependant_expenses.extend(cursor.fetchall())
+                
+                # Combine all expenses
+                all_expenses = parent_expenses + dependant_expenses
+                
+                return jsonify(all_expenses)
+                
+    except Exception as e:
+        print(f"Error fetching family expenses: {str(e)}")
         return jsonify({
             "success": False,
             "message": f"Server error: {str(e)}"
@@ -252,6 +466,7 @@ def get_all_profiles(id):
 @app.route("/health")
 def health_check():
     return jsonify({"status": "healthy"})
+
 
 # Main entry point
 if __name__ == "__main__":

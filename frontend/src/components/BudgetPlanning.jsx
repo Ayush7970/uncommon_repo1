@@ -18,7 +18,7 @@ const BudgetPlanning = () => {
 
   // Handle going back to graphic view
   const handleBackToGraphicView = () => {
-    navigate('/graphic-view', { state: { profileId, profileName, familyId } });
+    navigate('/graphic-view', { state: { profileId, profileName, familyId } }); //only if profileId is the same as familyId then we give cummulative data
   };
   
   return (
@@ -52,7 +52,7 @@ const BudgetPlanning = () => {
           <LoansInfo />
         </div>
         <div className="bar-chart-section">
-          <BarChart />
+          <BarChart profileId={profileId} familyId={familyId}/>
         </div>
       </div>
     </div>
