@@ -301,7 +301,7 @@ def get_all_profiles(id):
                     # This is a dependant - get the parent first
                     # Since dependant_of contains the parent's name, look for a profile with that name
                     parent_name = profile['dependant_of']
-                    print(f"Looking for parent with name: {parent_name}")  # Debug info
+                    # print(f"Looking for parent with name: {parent_name}")  # Debug info
                     
                     cursor.execute(
                         """
@@ -421,7 +421,19 @@ def get_family_expenses(profile_id):
                     (profile_id,)
                 )
                 parent_expenses = cursor.fetchall()
+                print(f"Parent expenses: {parent_expenses}")  # Debug info
                 
+                # get the parent name
+                cursor.execute(
+                    """
+                    SELECT full_name FROM master_profile 
+                    WHERE profile_id = %s
+                    """,
+                    (profile_id,)
+                )
+                parent = cursor.fetchone()
+                print(f"Parent name: {parent}")  # Debug info
+
                 # Get all dependants of this earner
                 cursor.execute(
                     """
@@ -429,7 +441,7 @@ def get_family_expenses(profile_id):
                     FROM master_profile
                     WHERE is_earner = 0 AND dependant_of = %s
                     """,
-                    (profile_id,)
+                    (parent['full_name'],)
                 )
                 dependants = cursor.fetchall()
                 
@@ -449,9 +461,10 @@ def get_family_expenses(profile_id):
                         (dependant['profile_id'],)
                     )
                     dependant_expenses.extend(cursor.fetchall())
-                
+                    print(f"Dependant expenses for {dependant['profile_id']}: {dependant_expenses}")
                 # Combine all expenses
                 all_expenses = parent_expenses + dependant_expenses
+                print(f"All expenses: {all_expenses}")
                 
                 return jsonify(all_expenses)
                 

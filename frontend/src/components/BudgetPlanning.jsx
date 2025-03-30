@@ -52,7 +52,7 @@ const BudgetPlanning = () => {
           <LoansInfo />
         </div>
         <div className="bar-chart-section">
-          <BarChart profileId={profileId} familyId={familyId}/>
+          <BarChart profileId={profileId}/>
         </div>
       </div>
     </div>
