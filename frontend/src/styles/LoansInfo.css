@@ -1,0 +1,66 @@
+/* Add these styles to your BudgetPlanning.css file */
+
+.loans-summary {
+    margin-bottom: 15px;
+    background-color: #3a3a3a;
+    padding: 15px;
+    border-radius: 6px;
+  }
+  
+  .loan-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .loan-total .label {
+    font-size: 0.9rem;
+    color: #ddd;
+  }
+  
+  .loan-total .amount {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #fff;
+  }
+  
+  .loans-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .loan-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px;
+    background-color: #3a3a3a;
+    border-radius: 6px;
+    transition: transform 0.2s;
+  }
+  
+  .loan-item:hover {
+    transform: translateX(5px);
+  }
+  
+  .loan-type {
+    font-weight: 500;
+    color: #fff;
+  }
+  
+  .loan-details {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  
+  .loan-amount {
+    font-weight: bold;
+    color: #fff;
+  }
+  
+  .loan-term {
+    font-size: 0.8rem;
+    color: #aaa;
+    margin-top: 4px;
+  }

@@ -1,7 +1,16 @@
-import React from 'react';
-import './ProfileSelection.css';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import '../styles/ProfileSelection.css';
 
 const ProfileSelection = ({ onProfileSelect }) => {
+  const location = useLocation();
+  const receivedData = location.state;
+  const navigate = useNavigate();
+  const [profiles, setProfiles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   // Generate random gradient for each profile button
   const generateRandomGradient = () => {
     const randomColor1 = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
@@ -9,15 +18,53 @@ const ProfileSelection = ({ onProfileSelect }) => {
     return `linear-gradient(145deg, ${randomColor1}, ${randomColor2})`;
   };
 
-  // This array would later be populated from your SQL database
-  // CHANGE THIS PART LATER: Replace with data from your SQL query
-  const profiles = [
-    { id: 1, name: 'Anupam' },
-    { id: 2, name: 'Ayush' },
-    { id: 3, name: 'Nathan' },
-    { id: 4, name: 'Emily' },
-    { id: 5, name: 'Michael' }
-  ];
+  // Handle profile selection
+  const handleProfileSelect = (profileId, profileName) => {
+    if (profileId === 'new') {
+      // Navigate to registration form if user clicks the "+" button
+      navigate('/register');
+    } else {
+      // Handle existing profile selection
+      console.log(`Selected profile: ${profileId}`);
+      // If you have an onProfileSelect prop, use it
+      // if (onProfileSelect) {
+      //   onProfileSelect(profileId);
+      // }
+
+      navigate('/budget-planning', {
+        state: {
+          profileId: profileId,
+          profileName: profileName,
+          // You can pass any additional data needed by the BudgetPlanning component
+          familyId: receivedData
+        }
+      });
+    }
+  };
+
+  // Fetch profiles from the API
+  useEffect(() => {
+    const fetchProfiles = async () => {
+      try {
+        const response = await fetch(`http://localhost:5001/api/profiles/${receivedData}`);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setProfiles(data);
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching profiles:", err);
+        setError('Failed to load profiles');
+        setLoading(false);
+      }
+    };
+
+    fetchProfiles();
+  }, [receivedData]);
+
+  if (loading) return <div className="loading">Loading profiles...</div>;
+  if (error) return <div className="error">{error}</div>;
 
   return (
     <div className="profile-selection-container">
@@ -32,7 +79,7 @@ const ProfileSelection = ({ onProfileSelect }) => {
               key={profile.id}
               className="profile-button"
               style={{ background: generateRandomGradient() }}
-              onClick={() => onProfileSelect(profile.name)}
+              onClick={() => handleProfileSelect(profile.id, profile.name)}
             >
               {profile.name}
             </button>
@@ -42,7 +89,7 @@ const ProfileSelection = ({ onProfileSelect }) => {
           <button 
             className="profile-button add-profile"
             style={{ background: generateRandomGradient() }}
-            onClick={() => onProfileSelect('new')}
+            onClick={() => handleProfileSelect('new')}
           >
             +
           </button>

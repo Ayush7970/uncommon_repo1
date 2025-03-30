@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './LogoAnimation.css'; // Import the CSS for animation
+import '../styles/LogoAnimation.css'; // Import the CSS for animation
 
 const LogoAnimation = ({ onAnimationComplete }) => {
   const [animationStage, setAnimationStage] = useState(1);
