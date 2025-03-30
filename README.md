@@ -1,10 +1,8 @@
-# FamilyFund
+# Finance Visualizer
 
 ## Overview
 
-FamilyFund allows users to track their finances, view detailed budget analysis, and get insights into their financial health. It provides an interactive experience with features like credit card info, loan tracking, monthly expenses, and more, powered by dynamic data visualization.
-
-The project integrates various components, including a credit card display, pie chart for expense breakdown, bar chart for monthly expenses, and other tools to track financial goals. It also includes 3D interactive background using Spline for a modern and visually immersive experience.
+Finance Visualizer allows users to track their finances, view detailed budget analysis, and get insights into their financial health. It provides an interactive experience with features like expense breakdown, loan tracking, monthly expenses, and more, powered by dynamic data visualization.
 
 ## Features
 
