@@ -16,14 +16,24 @@ const BudgetPlanning = () => {
     navigate('/profiles', { state: familyId });
   };
 
+  // Handle going back to graphic view
+  const handleBackToGraphicView = () => {
+    navigate('/graphic-view', { state: { profileId, profileName, familyId } });
+  };
+  
   return (
     <div className="budget-container">
       {/* Header with back button */}
       <div className="budget-header">
         <h1>{profileName}'s Budget Dashboard</h1>
-        <button className="back-button" onClick={handleBackToProfiles}>
-          Back to Profiles
-        </button>
+        <div className="header-buttons">
+          <button className="graphic-view-button" onClick={handleBackToGraphicView}>
+            Go to Graphic View
+          </button>
+          <button className="back-button" onClick={handleBackToProfiles}>
+            Back to Profiles
+          </button>
+        </div>
       </div>
       
       {/* Top section: Credit Card and Pie Chart side by side */}
@@ -31,7 +41,9 @@ const BudgetPlanning = () => {
         <div className="card-wrapper">
           <CreditCard profileName={profileName || "User"} />
         </div>
-        <PieChart />
+        <div className="pie-chart-section">
+          <PieChart />
+        </div>
       </div>
       
       {/* Bottom section: Loans and Bar Chart */}
