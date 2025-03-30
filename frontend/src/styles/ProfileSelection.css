@@ -1,31 +1,61 @@
 .profile-selection-container {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
   width: 100%;
-  background-color: #242424;
+  overflow: hidden;
   padding: 20px;
   text-align: center;
 }
 
+.spline-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.spline-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 10px 20px;
+  border-radius: 8px;
+  z-index: 2;
+}
+
 .content {
+  position: relative;
+  
+  z-index: 10;
   max-width: 1500px;
   width: 100%;
   padding: 2rem;
+  /* background-color: rgba(13, 12, 12, 0.7); */
+  /* backdrop-filter: blur(5px); */
+  border-radius: 16px;
 }
 
 .welcome {
   font-size: 4.5rem;
   color: #4ade80; /* Green color */
   margin-bottom: 1.5rem;
+  text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
 }
 
 .description {
   font-size: 3rem;
   color: #ffffff;
   margin-bottom: 5rem;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
 }
 
 .profiles-grid {
@@ -50,17 +80,34 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  /* padding: 50px; */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 .profile-button:hover {
   transform: scale(1.05);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
 }
 
 .profile-button.add-profile {
   background: linear-gradient(145deg, #6b7280, #4b5563);
   font-size: 2rem;
+}
+
+.loading, .error {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 15px 25px;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  z-index: 20;
+}
+
+.error {
+  background-color: rgba(220, 38, 38, 0.7);
 }
 
 @media (max-width: 600px) {
@@ -80,5 +127,10 @@
 
   .description {
     font-size: 1.2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .content {
+    padding: 1rem;
   }
 }
