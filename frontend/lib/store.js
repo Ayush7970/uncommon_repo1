@@ -50,6 +50,31 @@
 // Path: /Users/anupamsai/Desktop/UncommonAnupam/uncommon_repo1/frontend/lib/store.js
 import { create } from 'zustand';
 
+
+const generateRandomPosition = () => {
+  // Create a range of -10 to 10 for better scattering
+  // Avoid values too close to zero to prevent clustering in the middle
+  const generateCoordinate = () => {
+    const min = -10;
+    const max = 10;
+    const value = Math.random() * (max - min) + min;
+    
+    // Avoid the middle region (-3 to 3) to ensure scattering
+    if (value > -3 && value < 3) {
+      // Push values outside the middle
+      return value > 0 ? value + 3 : value - 3;
+    }
+    return value;
+  };
+  
+  return [
+    generateCoordinate(),
+    generateCoordinate(),
+    generateCoordinate()
+  ];
+};
+
+
 // Using your exact data structure from store.ts
 export const useTransactionStore = create((set) => ({
   transactions: [
@@ -58,7 +83,7 @@ export const useTransactionStore = create((set) => ({
       name: 'Salary Deposit',
       amount: 5000,
       type: 'Income',
-      position: [2, 1, -3],
+      position: generateRandomPosition(),
       connections: ['2', '3'],
       size: 0.5
     },
@@ -67,7 +92,7 @@ export const useTransactionStore = create((set) => ({
       name: 'Rent Payment',
       amount: 1500,
       type: 'Housing',
-      position: [-1, -2, 2],
+      position: generateRandomPosition(),
       connections: ['1', '4'],
       size: 0.5
     },
@@ -76,7 +101,7 @@ export const useTransactionStore = create((set) => ({
       name: 'Grocery Shopping',
       amount: 200,
       type: 'Food',
-      position: [3, -1, 1],
+      position: generateRandomPosition(),
       connections: ['1', '5'],
       size: 0.3
     },
@@ -85,7 +110,7 @@ export const useTransactionStore = create((set) => ({
       name: 'Utilities',
       amount: 150,
       type: 'Bills',
-      position: [-2, 2, -1],
+      position: generateRandomPosition(),
       connections: ['2', '5'],
       size: 0.2
     },
@@ -94,7 +119,7 @@ export const useTransactionStore = create((set) => ({
       name: 'Investment',
       amount: 1000,
       type: 'Savings',
-      position: [1, -3, -2],
+      position: generateRandomPosition(),
       connections: ['3', '4'],
       size: 0.1
     },
