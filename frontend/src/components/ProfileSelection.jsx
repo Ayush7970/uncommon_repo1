@@ -193,7 +193,7 @@ const ProfileSelection = ({ onProfileSelect }) => {
       
       {/* Content overlay */}
       <div className="content">
-        <h1 className="welcome">Welcome to FamilyFund!</h1>
+        <h1 className="welcome">Welcome to Finance Visualizer!</h1>
         <h2 className="description">Who's Budgeting?</h2>
         
         <div className="profiles-grid">

@@ -89,7 +89,7 @@ export function TransactionConnection({ start, end }: TransactionConnectionProps
         <meshBasicMaterial 
           color="#ffffff" 
           transparent 
-          opacity={0.8}
+          opacity={0.2}
           dashSize={0.1}
           gapSize={0.1}
           dashOffset={0}

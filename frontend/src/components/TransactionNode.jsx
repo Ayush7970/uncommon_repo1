@@ -18,13 +18,23 @@ export function TransactionNode({ transaction }) {
 
   const getColorByType = (type) => {
     const colors = {
-      Income: '#4CAF50',
-      Housing: '#F44336',
-      Food: '#F44336',
-      Bills: '#F44336',
-      Savings: '#F44336',
+      Income: '#4CAF50',     // Green
+      Housing: '#F44336',    // Red
+      Food: '#2196F3',       // Blue
+      Bills: '#FF9800',      // Orange
+      Savings: '#9C27B0',    // Purple
+      Healthcare: '#00BCD4', // Cyan
+      Transportation: '#795548', // Brown
+      Utilities: '#607D8B',  // Blue Grey
+      Entertainment: '#E91E63', // Pink
+      Health: '#009688',     // Teal
+      Communication: '#3F51B5', // Indigo
+      Personal: '#FFEB3B',   // Yellow
+      Education: '#673AB7',  // Deep Purple
+      Other: '#757575',      // Grey
+      Insurance: '#FF5722'   // Deep Orange
     };
-    return colors[type] || '#757575';
+    return colors[type] || '#757575';  // Return grey as default if type not found
   };
 
   return (

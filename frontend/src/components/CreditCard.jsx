@@ -6,7 +6,7 @@ import amexLogo from "../assets/amex-logo.png";
 import "../styles/CreditCard.css";
 
 const CreditCard = ({ profileName }) => {
-  const balance = 2000.0;
+  const balance = "09/27";
   const creditCardNumber = "" + Math.floor(1000 + Math.random() * 9000);
 
   // Motion values for mouse tracking
@@ -76,7 +76,7 @@ const CreditCard = ({ profileName }) => {
           <h3>{profileName.toUpperCase()}</h3>
         </div>
         <div className="right">
-          <h2 className="card-balance">${balance.toFixed(2)}</h2>
+          <h2 className="card-balance">{balance}</h2>
         </div>
       </div>
     </motion.div>

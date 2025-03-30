@@ -84,7 +84,7 @@ export const useTransactionStore = create((set) => ({
       amount: 5000,
       type: 'Income',
       position: generateRandomPosition(),
-      connections: ['2', '3'],
+      connections: ['2'],  // Each node connects to only one other node
       size: 0.5
     },
     {
@@ -93,7 +93,7 @@ export const useTransactionStore = create((set) => ({
       amount: 1500,
       type: 'Housing',
       position: generateRandomPosition(),
-      connections: ['1', '4'],
+      connections: ['3'],
       size: 0.5
     },
     {
@@ -102,7 +102,7 @@ export const useTransactionStore = create((set) => ({
       amount: 200,
       type: 'Food',
       position: generateRandomPosition(),
-      connections: ['1', '5'],
+      connections: ['4'],
       size: 0.3
     },
     {
@@ -111,7 +111,7 @@ export const useTransactionStore = create((set) => ({
       amount: 150,
       type: 'Bills',
       position: generateRandomPosition(),
-      connections: ['2', '5'],
+      connections: ['5'],
       size: 0.2
     },
     {
@@ -120,8 +120,98 @@ export const useTransactionStore = create((set) => ({
       amount: 1000,
       type: 'Savings',
       position: generateRandomPosition(),
-      connections: ['3', '4'],
-      size: 0.1
+      connections: ['6'],
+      size: 0.4
+    },
+    {
+      id: '6',
+      name: 'Health Insurance',
+      amount: 350,
+      type: 'Healthcare',
+      position: generateRandomPosition(),
+      connections: ['7'],
+      size: 0.3
+    },
+    {
+      id: '7',
+      name: 'Car Payment',
+      amount: 450,
+      type: 'Transportation',
+      position: generateRandomPosition(),
+      connections: ['8'],
+      size: 0.35
+    },
+    {
+      id: '8',
+      name: 'Internet Bill',
+      amount: 80,
+      type: 'Utilities',
+      position: generateRandomPosition(),
+      connections: ['9'],
+      size: 0.2
+    },
+    {
+      id: '9',
+      name: 'Restaurant Dining',
+      amount: 120,
+      type: 'Food',
+      position: generateRandomPosition(),
+      connections: ['10'],
+      size: 0.25
+    },
+    {
+      id: '10',
+      name: 'Streaming Services',
+      amount: 30,
+      type: 'Entertainment',
+      position: generateRandomPosition(),
+      connections: ['11'],
+      size: 0.15
+    },
+    {
+      id: '11',
+      name: 'Gym Membership',
+      amount: 50,
+      type: 'Health',
+      position: generateRandomPosition(),
+      connections: ['12'],
+      size: 0.2
+    },
+    {
+      id: '12',
+      name: 'Cell Phone',
+      amount: 70,
+      type: 'Communication',
+      position: generateRandomPosition(),
+      connections: ['13'],
+      size: 0.2
+    },
+    {
+      id: '13',
+      name: 'Shopping',
+      amount: 200,
+      type: 'Personal',
+      position: generateRandomPosition(),
+      connections: ['14'],
+      size: 0.3
+    },
+    {
+      id: '14',
+      name: 'Home Maintenance',
+      amount: 100,
+      type: 'Housing',
+      position: generateRandomPosition(),
+      connections: ['15'],
+      size: 0.25
+    },
+    {
+      id: '15',
+      name: 'Education Loan',
+      amount: 300,
+      type: 'Education',
+      position: generateRandomPosition(),
+      connections: ['1'],  // Last node connects back to first, forming a cycle
+      size: 0.3
     },
   ],
   selectedTransaction: null,
