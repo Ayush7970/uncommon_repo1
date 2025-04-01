@@ -639,21 +639,18 @@ def get_family_loans(profile_id):
                         "message": "Profile not found"
                     }), 404
                 
-                # Check if this user is an earner
                 if not profile['is_earner']:
                     return jsonify({
                         "success": False,
                         "message": "Only earners can view family loans"
                     }), 403
                 
-                # Get parent name
                 cursor.execute(
                     "SELECT full_name FROM master_profile WHERE profile_id = %s",
                     (profile_id,)
                 )
                 parent = cursor.fetchone()
                 
-                # Get parent's expenses
                 cursor.execute(
                     """
                     SELECT 
