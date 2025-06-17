@@ -113,8 +113,3 @@ Set your connection string and run migrations or SQL setup scripts as needed.
 - **Anupam Sai Sistla** — Full Stack Developer  
 - **Nathan Trinh** — Front End Developer  
 
-
----
-
-## ⚡ **Note**
-Replace `[repository-url]` with your actual GitHub repository link.
