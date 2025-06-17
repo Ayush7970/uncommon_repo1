@@ -109,15 +109,10 @@ Set your connection string and run migrations or SQL setup scripts as needed.
 
 ## 👥 **Team Members**
 
-- **Anupam Sai Sistla** — Full Stack Developer  
 - **Ayush Bhardwaj** — Full Stack Developer  
+- **Anupam Sai Sistla** — Full Stack Developer  
 - **Nathan Trinh** — Front End Developer  
 
----
-
-## 📄 **License**
-
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
 
 ---
 
